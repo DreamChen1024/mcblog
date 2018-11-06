@@ -47,6 +47,29 @@
         </div>
     </form>
     <script src="/node_modules/jquery/dist/jquery.min.js"></script>
+    <script>
+        $(function() {
+            $('#form').on('submit', function() {
+                $.ajax({
+                    url:'/login',
+                    type:'post',
+                    data:$('#form').serialize(),
+                    dataType:'json',
+                    success:function(result) {
+                        if(result.status === 200) {
+                            alert(result.msg);
+                            location.href = '/'
+                        }
+                    },
+                    error:function(err) {
+                        alert(err.responseJSON.msg)
+                    }
+                })
+                //阻止form表单提交
+                return false;
+            })
+        })
+    </script>
 </body>
 
 </html>

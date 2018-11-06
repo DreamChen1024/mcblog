@@ -58,12 +58,26 @@ app.post('/register', (req, res) => {
         //用户名不存在需要执行添加用户的sql语句
         const addSql = 'insert into users set ?'
         conn.query(addSql, user, (err, result) => {
+            console.log(result.affectedRows)
             if(err || result.affectedRows != 1) return res.status(500).send({status: 500, msg: "用户添加失败,请重试!"})
             res.send({status: 200, msg: "恭喜您,用户注册成功!"})
         })
     })
 })
 
+//登录页逻辑
+app.post('/login', (req, res) => {
+    //获取客户端提交过来的表单数据
+    const user = req.body
+    //执行sql语句 查询用户是否存在,密码是否正确
+    const querySql = 'select * from users where username = ? and password = ?'
+    conn.query(querySql, [user.username, user.password], (err, result) => {
+        if(err) return res.status(500).send({status: 500, msg: "登录失败,请重试!"})
+        if(result.length === 0) return res.status(400).send({status: 400, msg: "用户名或密码错误,请重新输入!"})
+        res.send({status: 200, msg: '恭喜您,登录成功!'})
+    })
+
+})
 
 
 app.listen(80, () => {
