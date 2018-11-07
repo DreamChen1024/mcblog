@@ -60,7 +60,7 @@ module.exports = {
     },
     // 注销
     handleLogoutGet(req, res) {
-        req.seesion.destroy(err => { //express-session 的方法
+        req.session.destroy(err => { //express-session 的方法
             // 该回调函数执行表示销毁成功
             res.redirect('/')
         })
