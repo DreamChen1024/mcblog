@@ -1,4 +1,5 @@
 <%- include('./common/header.ejs') %>
+
 <div class="container">
   <h1> 文章列表</h1>
   <div class="list-group">
@@ -12,5 +13,32 @@
     </a>
     <% }) %>
   </div>
+  <ul class="pagination list-group">
+      <li>
+        <% if (currentPage == 1) { %>
+          <span class="list-group-item disabled" aria-hidden="true">&laquo;</span>
+        <% } else {%>
+          <a href="/?page=<%= currentPage - 1 < 1 ? 1 : currentPage - 1 %>" aria-label="Previous">
+            <span aria-hidden="true">&laquo;</span>
+          </a>
+        <% } %>
+        
+      </li>
+      <% for (var i = 1; i <= totalPage; i++) { %>
+      <li class="<%= currentPage == i ? 'active' : '' %>">
+        <a href="/?page=<%= i %>"><%= i %></a>
+      </li>
+      <% } %>
+      <li>
+        <% if (currentPage == totalPage) { %>
+          <span class="list-group-item disabled" aria-hidden="true">&raquo;</span>
+        <% } else {%>
+          <a href="/?page=<%= currentPage + 1 > totalPage ? totalPage : currentPage + 1 %>" aria-label="Next">
+            <span aria-hidden="true">&raquo;</span>
+          </a>
+        <% } %>
+         
+      </li>
+    </ul>
 </div>
 <%- include('./common/footer.ejs') %>
