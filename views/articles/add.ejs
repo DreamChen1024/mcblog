@@ -31,13 +31,13 @@
                 data: $('#form').serialize(),
                 dataType: 'json',
                 success: function (result) {
-                    console.log(result)
+                    // console.log(result)
                     if (result.status === 200) {
                         location.href = '/articles/info/' + result.articleId
                     }
                 },
                 error: function (err) {
-                    console.log(error)
+                    // console.log(error)
                     if (err.responseJSON.status === 400) {
                         alert(err.responseJSON.msg)
                     }
