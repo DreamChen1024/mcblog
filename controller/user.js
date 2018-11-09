@@ -1,6 +1,8 @@
 //引入moment模块 创建时间
 const moment = require('moment')
 const conn = require('../db/db.js')
+const bcrypt = require('bcrypt')
+const saltRounds = 10;
 
 module.exports = {
     //注册页
@@ -28,11 +30,15 @@ module.exports = {
     
             //给用户添加创建时间的属性
             user.ctime = moment().format('YYYY-MM-DD HH:mm:ss')
+
+            bcrypt.hash(user.password, saltRounds, (err, hash) => {
+                user.password = hash
+            })
     
             //用户名不存在需要执行添加用户的sql语句
             const addSql = 'insert into users set ?'
             conn.query(addSql, user, (err, result) => {
-                console.log(result.affectedRows)
+                // console.log(result.affectedRows)
                 if(err || result.affectedRows != 1) return res.status(500).send({status: 500, msg: "用户添加失败,请重试!"})
                 res.send({status: 200, msg: "恭喜您,用户注册成功!"})
             })
@@ -43,10 +49,14 @@ module.exports = {
         //获取客户端提交过来的表单数据
         const user = req.body
         //执行sql语句 查询用户是否存在,密码是否正确
-        const querySql = 'select * from users where username = ? and password = ?'
-        conn.query(querySql, [user.username, user.password], (err, result) => {
+        const querySql = 'select * from users where username = ?'
+        conn.query(querySql, user.username, (err, result) => {
             if(err) return res.status(500).send({status: 500, msg: "登录失败,请重试!"})
             if(result.length === 0) return res.status(400).send({status: 400, msg: "用户名或密码错误,请重新输入!"})
+
+            bcrypt.compare(user.password, result[0].password, (err,compareResult) => {
+                if(err || compareResult) return res.status(400).send({status: 400, msg: "用户名或密码错误,请重试!"})
+            })
             //登录成功后存储用户信息到session中
             req.session.user = result[0]
             //存储登录状态q
